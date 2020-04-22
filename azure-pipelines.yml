@@ -17,14 +17,14 @@ steps:
   inputs:
     command: 'build'
     arguments: '--configuration $(BuildConfiguration)'
-    projects: 'Edisha.Common.Azure.CosmosDB/Edisha.Common.Azure.CosmosDB.csproj'
+    projects: 'CloudOpenDev.Azure.Common.CosmosDB/CloudOpenDev.Azure.Common.CosmosDB.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet pack'
   inputs: 
     command: 'pack'
     arguments: '--configuration $(BuildConfiguration)'
-    projects: 'Edisha.Common.Azure.CosmosDB/Edisha.Common.Azure.CosmosDB.csproj'
+    projects: 'CloudOpenDev.Azure.Common.CosmosDB/CloudOpenDev.Azure.Common.CosmosDB.csproj'
     nobuild: true
     versioningScheme: byEnvVar
     versionEnvVar: CurrentVersion
@@ -33,7 +33,7 @@ steps:
   displayName: 'Publish the nuget packages'
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'Edisha.Common.Azure.CosmosDB'
+    ArtifactName: 'CloudOpenDev.Azure.Common.CosmosDB'
     publishLocation: 'Container'
 
 - task: DotNetCoreCLI@2
