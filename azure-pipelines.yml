@@ -36,13 +36,6 @@ steps:
     ArtifactName: 'CloudOpenDev.Azure.Common.CosmosDB'
     publishLocation: 'Container'
 
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet push'
-  inputs:
-    command: 'push'
-    searchPatternPush: '$(Build.ArtifactStagingDirectory)/*.nupkg;!$(Build.ArtifactStagingDirectory)/*.Tests.nupkg'
-    feedPublish: 'Common/CommonFeed'
-
 - task: NuGetCommand@2
   displayName: 'Push NuGet Package'
   inputs:
