@@ -1,0 +1,52 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  BuildConfiguration: 'Release'
+  MajorVersion: '0'
+  MinorVersion: '0'
+  Patch: $[counter(format('{0}.{1}', variables['MajorVersion'], variables['MinorVersion']), 0)]
+  CurrentVersion: $(MajorVersion).$(MinorVersion).$(Patch)
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build'
+  inputs:
+    command: 'build'
+    arguments: '--configuration $(BuildConfiguration)'
+    projects: 'Edisha.Common.Azure.CosmosDB/Edisha.Common.Azure.CosmosDB.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet pack'
+  inputs: 
+    command: 'pack'
+    arguments: '--configuration $(BuildConfiguration)'
+    projects: 'Edisha.Common.Azure.CosmosDB/Edisha.Common.Azure.CosmosDB.csproj'
+    nobuild: true
+    versioningScheme: byEnvVar
+    versionEnvVar: CurrentVersion
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish the nuget packages'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'Edisha.Common.Azure.CosmosDB'
+    publishLocation: 'Container'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet push'
+  inputs:
+    command: 'push'
+    searchPatternPush: '$(Build.ArtifactStagingDirectory)/*.nupkg;!$(Build.ArtifactStagingDirectory)/*.Tests.nupkg'
+    feedPublish: 'Common/CommonFeed'
+
+- task: NuGetCommand@2
+  displayName: 'Push NuGet Package'
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'nuget.org'
