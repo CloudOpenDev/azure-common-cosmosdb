@@ -1,5 +1,6 @@
 trigger:
 - master
+- development
 
 pool:
   vmImage: 'windows-latest'
@@ -37,9 +38,18 @@ steps:
     publishLocation: 'Container'
 
 - task: NuGetCommand@2
-  displayName: 'Push NuGet Package'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: 'Push NuGet Package To NuGet.org'
   inputs:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
     nuGetFeedType: 'external'
     publishFeedCredentials: 'NuGet'
+
+- task: NuGetCommand@2
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/development'))
+  displayName: 'Push NuGet Package To AzureTestFeed'
+  inputs:
+    command: 'push'
+    searchPatternPush: '$(Build.ArtifactStagingDirectory)/*.nupkg;!$(Build.ArtifactStagingDirectory)/*.Tests.nupkg'
+    feedPublish: 'Azure/AzureTestFeed'
