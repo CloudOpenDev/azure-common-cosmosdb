@@ -9,7 +9,7 @@ variables:
   BuildConfiguration: 'Release'
   MajorVersion: '0'
   MinorVersion: '0'
-  Patch: $[counter(format('{0}.{1}.{2}', variables['MajorVersion'], variables['MinorVersion'], variables['Build.SourceBranch']), 5)]
+  Patch: $[counter(format('{0}.{1}.{2}', variables['MajorVersion'], variables['MinorVersion'], variables['Build.SourceBranch']), 0)]
   CurrentVersion: $(MajorVersion).$(MinorVersion).$(Patch)
 
 steps:
